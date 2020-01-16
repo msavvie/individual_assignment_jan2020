@@ -1,0 +1,21 @@
+---
+title: "Afghanistan 2007"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+```
+I want to create a graph with the information found in the Afghanistan.csv file.
+```{r}
+Afghanistan_2007 <- read_csv('Afghanistan_2007.csv')
+```
+For now, the intention is to make a graph with only "best", referring to best estimate of death count, and "date_start", referring to the day the event began/occurred.
+```{r}
+ggplot(Afghanistan_2007) +
+  geom_point(mapping = aes(x = date_start, y = best, color = 'red')) +
+  xlab('Date event begun') +
+  ylab('Best estimate of deaths') +
+  ggtitle('Deaths in Afghanistan in 2007')
+
+ggsave('Afghanistan_2007.png')
+```
