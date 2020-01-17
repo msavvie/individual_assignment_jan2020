@@ -9,13 +9,42 @@ I want to create a graph with the information found in the Afghanistan.csv file.
 ```{r}
 Afghanistan_2007 <- read_csv('Afghanistan_2007.csv')
 ```
+
+
+```{r}
+Afghanistan_2007 <- Afghanistan_2007 %>%
+  mutate(type_of_violence = ifelse(type_of_violence == 1, 'state-based conflict', type_of_violence)) %>%
+  mutate(type_of_violence = ifelse(type_of_violence == 2, 'non-state conflict', type_of_violence)) %>%
+  mutate(type_of_violence = ifelse(type_of_violence == 3, 'one-sided violence', type_of_violence))
+```
+
 For now, the intention is to make a graph with only "best", referring to best estimate of death count, and "date_start", referring to the day the event began/occurred.
 ```{r}
-ggplot(Afghanistan_2007) +
-  geom_point(mapping = aes(x = date_start, y = best, color = 'red')) +
-  xlab('Date event begun') +
-  ylab('Best estimate of deaths') +
-  ggtitle('Deaths in Afghanistan in 2007')
+# Afgh_civ <- Afghanistan_2007 %>% filter(deaths_civilians != 0)
 
-ggsave('Afghanistan_2007.png')
+ggplot(Afghanistan_2007) +
+  geom_point(mapping = aes(x = date_start, y = deaths_civilians, color = type_of_violence), size = .6) +
+  xlab('Date event begun') +
+  ylab('Deaths civilians') +
+  ggtitle('Deaths in Afghanistan in 2007, Civilians') +
+  scale_color_brewer(name = 'Type of Violence', palette = 'Dark2')
+
+
+ggsave('Afghanistan_2007_civilians.png')
+```
+
+```{r}
+Afghanistan_Deaths <- Afghanistan_2007 %>% filter(type_of_violence == 'state-based conflict')
+
+ggplot(Afghanistan_Deaths) +
+  geom_point(mapping = aes(x = date_start, y = deaths_a, color = 'Deaths side a'), size = .6) +
+  geom_point(mapping = aes(x = date_start, y = deaths_b, color = 'Death side b'), size = .6) +
+  geom_point(mapping = aes(x = date_start, y = deaths_civilians, color = 'Deaths civilian'), size = .6) +
+  xlab('Date event begun') +
+  ylab('Deaths') +
+  ggtitle('Deaths in Afghanistan in 2007, State-Based Conflict') +
+  scale_color_brewer(name = 'Death', palette = 'Dark2')
+
+
+ggsave('Afghanistan_2007_Deaths.png')
 ```
